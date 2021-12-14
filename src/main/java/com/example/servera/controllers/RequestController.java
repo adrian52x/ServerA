@@ -1,10 +1,13 @@
 package com.example.servera.controllers;
 
 import com.example.servera.entities.Request;
-import com.example.servera.services.FriendListService;
 import com.example.servera.services.RequestService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,24 +18,33 @@ import java.util.Map;
 @RequestMapping("/requests")
 public class RequestController {
 
-    RequestService requestService;
 
-    public RequestController(RequestService requestService){
+    private RestTemplate restTemplate = new RestTemplate();
+
+    final String foreignIp = "http://localhost:9091";
+    final String homeIp = "http://localhost:8080";
+
+    RequestService requestService;
+    LogInController lc;
+
+    public RequestController(RequestService requestService, LogInController lc) {
+
         this.requestService = requestService;
+        this.lc = lc;
     }
 
     @GetMapping("/all")
-    public Iterable<Request> fetchAllRequests(){
+    public Iterable<Request> fetchAllRequests() {
         return requestService.findAllRequests();
     }
 
     @GetMapping("/{userId}")
-    public List<Request> findRequestsByUserId(@PathVariable int userId){
+    public List<Request> findRequestsByUserId(@PathVariable int userId) {
         return requestService.findRequestsByUserId(userId);
     }
 
     @PostMapping("/save")
-    public Request addRequest(@RequestBody Request request){
+    public Request addRequest(@RequestBody Request request) {
         return requestService.saveRequest(request);
     }
 
@@ -48,5 +60,21 @@ public class RequestController {
         return response;
     }
 
+    @PostMapping("/sendFriendRequest")
+    public String sendGreeting(@RequestParam String f_email, Model model) {
+        String receiverEmail = f_email;
+        String receiverIP = foreignIp + "/friendsip";
+        String userEmail = lc.currentUserEmail;
+        Map<String, String> reqMap = new HashMap<>();
+        String method = "request";
+        String requestForFriendship = "{" + method + ":" + userEmail + " " + homeIp + " " + receiverEmail + " " + foreignIp + " " + "v1" + "}";
+        reqMap.put("request", requestForFriendship);
+        ResponseEntity response = restTemplate.postForEntity(receiverIP, reqMap, String.class);
+        model.addAttribute("request", response.getBody());
+        model.addAttribute("userEmail", userEmail);
+        System.out.println(response.getBody());
+        return "responseDisplay";
+
+    }
 
 }
