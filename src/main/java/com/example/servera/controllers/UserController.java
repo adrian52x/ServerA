@@ -4,6 +4,7 @@ import com.example.servera.entities.User;
 import com.example.servera.services.UserService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 
 
 @CrossOrigin
@@ -24,7 +25,7 @@ public class UserController {
     }
 
     @GetMapping("/id/{id}")
-    public User getUserById(@PathVariable int id){
+    public Optional<User> getUserById(@PathVariable int id){
         return userService.findUserById(id);
     }
 

@@ -24,7 +24,7 @@ public class RequestService {
     }
 
     public Optional<Request> findRequestById(int id){
-        return requestRepository.findRequestById(id);
+        return requestRepository.findById(id);
     }
 
     public List<Request> findRequestsByUserId(int userId){
