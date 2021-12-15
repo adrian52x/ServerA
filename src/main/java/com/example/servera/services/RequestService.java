@@ -1,6 +1,7 @@
 package com.example.servera.services;
 
 import com.example.servera.entities.Request;
+import com.example.servera.entities.User;
 import com.example.servera.repos.RequestRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ public class RequestService {
         this.requestRepository = requestRepository;
     }
     ////////////
+
 
 
 
@@ -37,5 +39,9 @@ public class RequestService {
 
     public void deleteRequest(Request request){
         requestRepository.delete(request);
+    }
+
+    public Request findRequestByUserAndForeignEmail(User user, String foreignUser){
+        return requestRepository.findRequestByUserAndForeignUser(user,foreignUser);
     }
 }
