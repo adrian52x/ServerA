@@ -1,7 +1,9 @@
 package com.example.servera.controllers;
 
 import com.example.servera.entities.Request;
+import com.example.servera.entities.User;
 import com.example.servera.services.RequestService;
+import com.example.servera.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
@@ -23,11 +25,13 @@ public class RequestController {
     final String homeIp = "http://localhost:8080";
 
     RequestService requestService;
+    UserService userService;
     LogInController lc;
 
-    public RequestController(RequestService requestService, LogInController lc) {
+    public RequestController(RequestService requestService, UserService userService, LogInController lc) {
 
         this.requestService = requestService;
+        this.userService = userService;
         this.lc = lc;
     }
 
@@ -61,18 +65,27 @@ public class RequestController {
     @PostMapping("/sendFriendRequest")
     public String sendGreeting(@RequestParam String f_email,@RequestParam String currentemail,@RequestParam String userid, Model model) {
         System.out.println(f_email);
-        String receiverEmail = f_email;
+        String foreignEmail = f_email;
         String currentUserId = userid;
         String receiverIP = foreignIp + "/friendship";
         String userEmail = currentemail;
         Map<String, String> reqMap = new HashMap<>();
         String method = "request";
-        String requestForFriendship = "{" + method + ": " + userEmail +" "+currentUserId+" "+ homeIp + " " + receiverEmail + " " + foreignIp + " " + "v1" + "}";
+        String requestForFriendship = "{" + method + ": " + userEmail +" "+currentUserId+" "+ homeIp + " " + foreignEmail + " " + foreignIp + " " + "v1" + "}";
         reqMap.put("request", requestForFriendship);
         ResponseEntity response = restTemplate.postForEntity(receiverIP, reqMap, String.class);
         model.addAttribute("request", response.getBody());
         model.addAttribute("userEmail", userEmail);
         System.out.println(response.getBody());
+       // String responseFromB = response.getBody().toString().substring(0, 28);
+        String[] responseDetails = response.getBody().toString().split("\\s+");
+
+        User user = userService.findUserByEmail(currentemail);
+        Request rq = new Request(user, foreignEmail);
+
+        if(responseDetails[0].equals("TRUE")){
+            requestService.saveRequest(rq);
+        }
         return "responseDisplay";
 
     }
