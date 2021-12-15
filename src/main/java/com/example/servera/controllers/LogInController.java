@@ -35,8 +35,8 @@ public class LogInController {
         if (currentUser != null) {
             currentUserId = currentUser.getId();
             System.out.println(currentUserId);
-            model.addAttribute("currentEmail","Email: "+email);
-            model.addAttribute("currentId","Id:"+currentUserId);
+            model.addAttribute("currentEmail",email);
+            model.addAttribute("currentId",currentUserId);
             return mv;
 
         }

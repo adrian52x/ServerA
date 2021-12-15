@@ -13,9 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin
 @RestController
-@RequestMapping("/requests")
 public class RequestController {
 
 
@@ -61,13 +59,15 @@ public class RequestController {
     }
 
     @PostMapping("/sendFriendRequest")
-    public String sendGreeting(@RequestParam String f_email, Model model) {
+    public String sendGreeting(@RequestParam String f_email,@RequestParam String currentemail,@RequestParam String userid, Model model) {
+        System.out.println(f_email);
         String receiverEmail = f_email;
-        String receiverIP = foreignIp + "/friendsip";
-        String userEmail = lc.currentUserEmail;
+        String currentUserId = userid;
+        String receiverIP = foreignIp + "/friendship";
+        String userEmail = currentemail;
         Map<String, String> reqMap = new HashMap<>();
         String method = "request";
-        String requestForFriendship = "{" + method + ":" + userEmail + " " + homeIp + " " + receiverEmail + " " + foreignIp + " " + "v1" + "}";
+        String requestForFriendship = "{" + method + ": " + userEmail +" "+currentUserId+" "+ homeIp + " " + receiverEmail + " " + foreignIp + " " + "v1" + "}";
         reqMap.put("request", requestForFriendship);
         ResponseEntity response = restTemplate.postForEntity(receiverIP, reqMap, String.class);
         model.addAttribute("request", response.getBody());
