@@ -33,8 +33,8 @@ public class DataSetup implements CommandLineRunner {
         User u4 = userRepository.save(new User("David","Virk","d@gmail.com"));
 
 
-        friendListRepository.save(new FriendList(u1,1,"localhost:9091"));
-        friendListRepository.save(new FriendList(u1,2,"localhost:9091"));
+        //friendListRepository.save(new FriendList(u1,1,"localhost:9091"));
+       // friendListRepository.save(new FriendList(u1,2,"localhost:9091"));
 
 
 
