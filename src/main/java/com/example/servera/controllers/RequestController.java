@@ -77,16 +77,16 @@ public class RequestController {
         model.addAttribute("request", response.getBody());
         model.addAttribute("userEmail", userEmail);
         System.out.println(response.getBody());
-       // String responseFromB = response.getBody().toString().substring(0, 28);
-        //String[] responseDetails = response.getBody().toString().split("\\s+");
-
-        //User user = userService.findUserByEmail(currentemail);
-        //Request rq = new Request(user, foreignEmail);
-
-        //if(responseDetails[0].equals("TRUE")){
-            //requestService.saveRequest(rq);
-        //}
-        return "responseDisplay";
+//        String responseFromB = response.getBody().toString().substring(0, 28);
+//        String[] responseDetails = response.getBody().toString().split("\\s+");
+//
+//        User user = userService.findUserByEmail(currentemail);
+//        Request rq = new Request(user, foreignEmail);
+//
+//        if(responseDetails[0].equals("TRUE")){
+//            requestService.saveRequest(rq);
+//        }
+        return "Your request has been received.";
 
     }
 
