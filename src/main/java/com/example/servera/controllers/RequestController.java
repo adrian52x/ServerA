@@ -2,37 +2,39 @@ package com.example.servera.controllers;
 
 import com.example.servera.entities.Request;
 import com.example.servera.entities.User;
+import com.example.servera.services.FriendListService;
 import com.example.servera.services.RequestService;
 import com.example.servera.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 @RestController
+@Controller
 public class RequestController {
 
-
-    private RestTemplate restTemplate = new RestTemplate();
-
-    final String foreignIp = "http://localhost:9091";
     final String homeIp = "http://localhost:8080";
+    final String foreignIp = "http://localhost:9091";
 
     RequestService requestService;
     UserService userService;
-    LogInController lc;
+    FriendListService fs;
+    Map<String,String> newRequests = new HashMap<>();
 
-    public RequestController(RequestService requestService, UserService userService, LogInController lc) {
+    private RestTemplate restTemplate = new RestTemplate();
 
+    public RequestController(RequestService requestService, UserService userService, FriendListService fs) {
         this.requestService = requestService;
         this.userService = userService;
-        this.lc = lc;
+        this.fs = fs;
     }
 
     @GetMapping("/all")
@@ -51,8 +53,7 @@ public class RequestController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public Map<String, Boolean> deleteRequest(@PathVariable int id)
-            throws ResourceNotFoundException {
+    public Map<String, Boolean> deleteRequest(@PathVariable int id) throws ResourceNotFoundException {
         Request request = requestService.findRequestById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Request not found for this id :: " + id));
 
@@ -71,23 +72,36 @@ public class RequestController {
         String userEmail = currentemail;
         Map<String, String> reqMap = new HashMap<>();
         String method = "request";
-        String requestForFriendship = "{" + method + ": " + userEmail +" "+currentUserId+" "+ homeIp + " " + foreignEmail + " " + foreignIp + " " + "v1" + "}";
+        String requestForFriendship = "{" + method + ": " + userEmail + " " + currentUserId + " " + homeIp + " " + foreignEmail + " " + foreignIp + " " + "v1" + "}";
         reqMap.put("request", requestForFriendship);
         ResponseEntity response = restTemplate.postForEntity(receiverIP, reqMap, String.class);
         model.addAttribute("request", response.getBody());
         model.addAttribute("userEmail", userEmail);
         System.out.println(response.getBody());
-//        String responseFromB = response.getBody().toString().substring(0, 28);
-//        String[] responseDetails = response.getBody().toString().split("\\s+");
-//
-//        User user = userService.findUserByEmail(currentemail);
-//        Request rq = new Request(user, foreignEmail);
-//
-//        if(responseDetails[0].equals("TRUE")){
-//            requestService.saveRequest(rq);
-//        }
-        return "Your request has been received.";
 
+        return "Your request has been received.";
     }
 
+    @PostMapping("/friendship")
+    public ResponseEntity<String> postGreeting(@RequestBody Map<String,String> req) {
+        String friendshipRequest = req.get("request");
+        String[] requestDetails = friendshipRequest.split("\\s+");
+        System.out.println(requestDetails[3]);
+        User user = userService.findUserByEmail(requestDetails[5]);
+        String foreignEmail = requestDetails[2];
+        int foreignId = Integer.parseInt(requestDetails[3].substring(3));
+        String senderIp = requestDetails[4] ;
+        String receiverIp = requestDetails[6];
+
+        if(user!= null){
+            // create request in DB
+            Request rq = new Request(user, user.getEmail(), foreignId, foreignEmail, senderIp, receiverIp);
+
+            if(requestService.findRequestByUserAndForeignEmail(user,foreignEmail)==null){
+                requestService.saveRequest(rq);
+                return ResponseEntity.ok("TRUE Request created in server A."+req.get("request")+" On "+new Date());
+            }
+        }
+        return ResponseEntity.ok("User does not exist in Server A." +req.get("request"));
+    }
 }

@@ -4,8 +4,6 @@ import com.example.servera.entities.User;
 import com.example.servera.services.UserService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 
 @CrossOrigin
 @RestController
@@ -18,14 +16,13 @@ public class UserController {
         this.userService = userService;
     }
 
-
     @GetMapping("/all")
     public Iterable<User> getAllUsers(){
         return userService.findAllUsers();
     }
 
     @GetMapping("/id/{id}")
-    public Optional<User> getUserById(@PathVariable int id){
+    public User getUserById(@PathVariable int id){
         return userService.findUserById(id);
     }
 
