@@ -41,7 +41,8 @@ public class RequestService {
         requestRepository.delete(request);
     }
 
-    public Request findRequestByUserAndForeignEmail(User user, String foreignUser){
-        return requestRepository.findRequestByUserAndForeignUser(user,foreignUser);
+
+    public Request findRequestByUserAndForeignEmail(User user, String foreignUserEmail){
+        return requestRepository.findRequestByUserAndForeignUserEmail(user,foreignUserEmail);
     }
 }

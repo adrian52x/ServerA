@@ -14,5 +14,5 @@ public interface RequestRepository extends JpaRepository<Request,Integer> {
     List<Request> findRequestByUser_Id(int userId);
     //Optional<Request> findRequestById(int id);
     Request deleteRequestById(int id);
-    Request findRequestByUserAndForeignUser(User user, String foreignUser);
+    Request findRequestByUserAndForeignUserEmail(User user, String foreignUserEmail);
 }
