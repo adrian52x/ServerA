@@ -12,6 +12,7 @@ import javax.persistence.*;
 @Setter
 public class FriendList {
 
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
