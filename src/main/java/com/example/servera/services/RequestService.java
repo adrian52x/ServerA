@@ -16,7 +16,6 @@ public class RequestService {
     public RequestService(RequestRepository requestRepository){
         this.requestRepository = requestRepository;
     }
-    ////////////
 
 
 
@@ -26,7 +25,7 @@ public class RequestService {
     }
 
     public Optional<Request> findRequestById(int id){
-        return requestRepository.findById(id);
+        return requestRepository.findRequestById(id);
     }
 
     public List<Request> findRequestsByUserId(int userId){
@@ -41,6 +40,9 @@ public class RequestService {
         requestRepository.delete(request);
     }
 
+    public void deleteRequestByRequestId(int id){
+        requestRepository.deleteRequestById(id);
+    }
 
     public Request findRequestByUserAndForeignEmail(User user, String foreignUserEmail){
         return requestRepository.findRequestByUserAndForeignUserEmail(user,foreignUserEmail);

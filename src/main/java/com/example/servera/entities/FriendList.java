@@ -33,4 +33,5 @@ public class FriendList {
         this.foreignUserEmail = foreignUserEmail;
         this.foreignUserHost = foreignUserHost;
     }
+
 }

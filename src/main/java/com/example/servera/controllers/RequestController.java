@@ -1,7 +1,9 @@
 package com.example.servera.controllers;
 
+import com.example.servera.entities.FriendList;
 import com.example.servera.entities.Request;
 import com.example.servera.entities.User;
+import com.example.servera.services.FriendListService;
 import com.example.servera.services.RequestService;
 import com.example.servera.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,49 +21,53 @@ import java.util.Map;
 @RestController
 public class RequestController {
 
-
     private RestTemplate restTemplate = new RestTemplate();
 
-    final String foreignIp = "http://localhost:9091";
     final String homeIp = "http://localhost:8080";
+    final String foreignIp = "http://localhost:9091";
 
     RequestService requestService;
     UserService userService;
-    LogInController lc;
+    FriendListService fs;
+    Map<String,String> newRequests = new HashMap<>();
 
-    public RequestController(RequestService requestService, UserService userService, LogInController lc) {
-
+    public RequestController(RequestService requestService,UserService userService, FriendListService fs){
         this.requestService = requestService;
         this.userService = userService;
-        this.lc = lc;
+        this.fs = fs;
     }
 
-    @GetMapping("/all")
-    public Iterable<Request> fetchAllRequests() {
-        return requestService.findAllRequests();
+
+    @PostMapping("/friendship")
+    public ResponseEntity<String> postGreeting(@RequestBody Map<String,String> req) {
+        String friendshipRequest = req.get("request");
+        String[] requestDetails = friendshipRequest.split("\\s+");
+
+        System.out.println(friendshipRequest);
+        User user = userService.findUserByEmail(requestDetails[6]);
+        String foreignEmail = requestDetails[2];
+        int foreignId = Integer.parseInt(requestDetails[4]);
+        String senderIp = requestDetails[5] ;
+        String receiverIp = requestDetails[7];
+
+
+        // Checking the email address if exists in our database.
+
+        if(user!= null){
+            // create request in DB
+            Request rq = new Request(user,user.getEmail(),foreignId,foreignEmail,senderIp,receiverIp);
+
+            if(requestService.findRequestByUserAndForeignEmail(user,foreignEmail)==null){
+                requestService.saveRequest(rq);
+                return ResponseEntity.ok("TRUE Request created in server B."+req.get("request")+" On "+new Date());
+            }
+
+
+        }
+            return ResponseEntity.ok("User does not exist in Server B." +req.get("request"));
+
     }
 
-    @GetMapping("/{userId}")
-    public List<Request> findRequestsByUserId(@PathVariable int userId) {
-        return requestService.findRequestsByUserId(userId);
-    }
-
-    @PostMapping("/save")
-    public Request addRequest(@RequestBody Request request) {
-        return requestService.saveRequest(request);
-    }
-
-    @DeleteMapping("/delete/{id}")
-    public Map<String, Boolean> deleteRequest(@PathVariable int id)
-            throws ResourceNotFoundException {
-        Request request = requestService.findRequestById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Request not found for this id :: " + id));
-
-        requestService.deleteRequest(request);
-        Map<String, Boolean> response = new HashMap<>();
-        response.put("request deleted", Boolean.TRUE);
-        return response;
-    }
 
     @PostMapping("/sendFriendRequest")
     public String sendGreeting(@RequestParam String f_email,@RequestParam String currentemail,@RequestParam String userid, Model model) {
@@ -77,17 +84,69 @@ public class RequestController {
         model.addAttribute("request", response.getBody());
         model.addAttribute("userEmail", userEmail);
         System.out.println(response.getBody());
-//        String responseFromB = response.getBody().toString().substring(0, 28);
-//        String[] responseDetails = response.getBody().toString().split("\\s+");
-//
-//        User user = userService.findUserByEmail(currentemail);
-//        Request rq = new Request(user, foreignEmail);
-//
-//        if(responseDetails[0].equals("TRUE")){
-//            requestService.saveRequest(rq);
-//        }
+
         return "Your request has been received.";
 
+    }
+
+
+    @PostMapping("/response")
+    public ResponseEntity<String> getConfirmation(@RequestBody Map<String,String> req) {
+
+        String responseFromRequest = req.get("confirmation");
+        String[] responseDetails = responseFromRequest.split("\\s+");
+        //getting all the values from response in variables
+        int userId = Integer.parseInt(responseDetails[2]);
+        String userEmail = responseDetails[3];
+        int foreignUserId = Integer.parseInt(responseDetails[4]);
+        String foreignUserEmail = responseDetails[5];
+        String foreignUserHost = responseDetails[6];
+
+        User user = userService.findUserById(userId);
+        fs.saveInFriendList(new FriendList(user,userEmail,foreignUserId,foreignUserEmail,foreignUserHost));
+
+        System.out.println(responseFromRequest);
+
+
+        return ResponseEntity.ok("Confirmed." +req.get("confirmation")+new Date());
+
+    }
+
+
+
+
+
+
+
+
+
+    //Endpoints
+
+    @GetMapping("/all")
+    public Iterable<Request> fetchAllRequests(){
+        return requestService.findAllRequests();
+    }
+
+    @GetMapping("/{userId}")
+    public List<Request> findRequestsByUserId(@PathVariable int userId){
+        return requestService.findRequestsByUserId(userId);
+    }
+
+    @PostMapping("/save")
+    public Request addRequest(@RequestBody Request request){
+        return requestService.saveRequest(request);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public Map<String, Boolean> deleteRequest(@PathVariable int id)
+            throws ResourceNotFoundException {
+        Request request = requestService.findRequestById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Request not found for this id :: " + id));
+
+        requestService.deleteRequest(request);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("request deleted", Boolean.TRUE);
+        return response;
     }
 
 }

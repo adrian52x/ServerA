@@ -31,10 +31,10 @@ public class DataSetup implements CommandLineRunner {
         User u2 = userRepository.save(new User("Bert","Hede","b@gmail.com"));
         User u3 = userRepository.save(new User("Creed","Luk","c@gmail.com"));
         User u4 = userRepository.save(new User("David","Virk","d@gmail.com"));
-
-
-        //friendListRepository.save(new FriendList(u1,1,"localhost:9091"));
-       // friendListRepository.save(new FriendList(u1,2,"localhost:9091"));
+        User u5 = userRepository.save(new User("Dominic","Smith","ds@gmail.com"));
+        User u6 = userRepository.save(new User("Mikkel","Meinertsen","mm@gmail.com"));
+        User u7 = userRepository.save(new User("Michelle","Theisen","mt@gmail.com"));
+        User u8 = userRepository.save(new User("Nikolaj","Struntze","ns@gmail.com"));
 
 
 

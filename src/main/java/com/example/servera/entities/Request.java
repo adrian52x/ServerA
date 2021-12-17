@@ -31,5 +31,13 @@ public class Request {
     private String status = "pending";
 
 
+    public Request(User user, String userEmail, int foreignUserId, String foreignUserEmail, String senderIp, String receiverIp) {
+        this.user = user;
+        this.userEmail = userEmail;
+        this.foreignUserId = foreignUserId;
+        this.foreignUserEmail = foreignUserEmail;
+        this.senderIp = senderIp;
+        this.receiverIp = receiverIp;
+    }
 
 }
