@@ -25,7 +25,6 @@ public class MainController {
     final String homeIp = "18.209.167.95";
     final String foreignIp = "54.160.4.136";
 
-
     List<Request> requestList = new ArrayList<>();
     int currentId = 0;
 
