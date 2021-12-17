@@ -1,11 +1,10 @@
 package com.example.servera.entities;
 
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import javax.persistence.*;
+
 
 @Entity
 @NoArgsConstructor
@@ -13,6 +12,7 @@ import javax.persistence.*;
 @Setter
 public class FriendList {
 
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;

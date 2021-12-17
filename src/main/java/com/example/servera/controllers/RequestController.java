@@ -25,6 +25,7 @@ public class RequestController {
 
     private RestTemplate restTemplate = new RestTemplate();
 
+<<<<<<< HEAD
     //final String homeIp = "34.235.165.180";
     //final String foreignIp = "54.210.22.88";
 
@@ -33,6 +34,10 @@ public class RequestController {
 
 
 
+=======
+    final String homeIp = "18.209.167.95";
+    final String foreignIp = "54.160.4.136";
+>>>>>>> 4e7dd0c1fee5c7d358d85150e9b0ddd48bc0b4c9
 
     RequestService requestService;
     UserService userService;
