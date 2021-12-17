@@ -18,13 +18,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+@CrossOrigin
 @RestController
 public class RequestController {
 
     private RestTemplate restTemplate = new RestTemplate();
 
-    final String homeIp = "34.235.165.180";
-    final String foreignIp = "54.210.22.88";
+    //final String homeIp = "34.235.165.180";
+    //final String foreignIp = "54.210.22.88";
+
+    final String homeIp = "http://localhost:8080/";
+   final String foreignIp = "http://localhost:9091/";
+
+
+
 
     RequestService requestService;
     UserService userService;
