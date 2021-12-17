@@ -23,8 +23,8 @@ public class RequestController {
 
     private RestTemplate restTemplate = new RestTemplate();
 
-    final String homeIp = "http://localhost:8080";
-    final String foreignIp = "http://localhost:9091";
+    final String homeIp = "34.235.165.180";
+    final String foreignIp = "54.210.22.88";
 
     RequestService requestService;
     UserService userService;
@@ -64,7 +64,7 @@ public class RequestController {
 
 
         }
-            return ResponseEntity.ok("FALSE Request was not created [Maybe already friends OR active request already exists");
+            return ResponseEntity.ok("FALSE Request was not created [Maybe already friends OR active request already exists]");
 
     }
 
