@@ -59,12 +59,12 @@ public class RequestController {
 
             if(requestService.findRequestByUserAndForeignEmail(user,foreignEmail)==null){
                 requestService.saveRequest(rq);
-                return ResponseEntity.ok("TRUE Request created in server B."+req.get("request")+" On "+new Date());
+                return ResponseEntity.ok("TRUE Request created in server A."+req.get("request")+" On "+new Date());
             }
 
 
         }
-            return ResponseEntity.ok("User does not exist in Server B." +req.get("request"));
+            return ResponseEntity.ok("User does not exist in Server A." +req.get("request"));
 
     }
 
