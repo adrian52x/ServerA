@@ -24,8 +24,8 @@ public class MainController {
 
     private RestTemplate restTemplate = new RestTemplate();
 
-    final String HomeIp = "18.209.167.95";
-    final String foreignIp = "54.160.4.136";
+    final String HomeIp = "http://18.209.167.95";
+    final String foreignIp = "http://54.160.4.136";
 
     List<Request> requestList = new ArrayList<>();
     int currentId = 0;
